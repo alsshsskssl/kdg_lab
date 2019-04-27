@@ -1,0 +1,32 @@
+if has("syntax")
+	syntax on
+endif
+
+set nu
+set nocompatible
+filetype off
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+
+Plugin 'VundleVim/Vundle.vim'
+
+Plugin 'scrooloose/nerdtree'
+
+Plugin 'vim-airline/vim-airline'
+
+Plugin 'airblade/vim-gitgutter'
+
+Plugin 'scrooloose/syntastic'
+
+Plugin 'jelera/vim-javascript-syntax'
+
+call vundle#end()
+filetype plugin indent on
+" NERDTree
+map <F3> :NERDTree<cr>
+map <F4> :NERDTreeToggle<cr>
+noremap <C-F> :NERDTreeFind<cr>
+noremap <C-h> <C-w>h
+noremap <C-j> <C-w>j
+noremap <C-k> <C-w>k
+noremap <C-l> <C-w>l
