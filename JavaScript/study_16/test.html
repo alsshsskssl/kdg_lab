@@ -1,0 +1,38 @@
+<html>
+	<head>
+		<title>
+			study_16
+		</title>
+
+	<script type="text/javascript">
+		var Animal = function(){}
+
+		Animal.prototype = {
+			walk : function(){
+				document.writeln("jong jong..");
+			}
+		};
+
+		var SuperAnimal = function(){}
+		SuperAnimal.prototype = {
+			walk : function(){
+				document.writeln("dadadat!!!");
+			}
+		};
+
+		var Dog = function(){};
+		Dog.prototype = new Animal();
+		var d1 = new Dog();
+		d1.walk();
+
+		Dog.prototype = new SuperAnimal();
+		var d2 = Dog();
+		d2.walk();
+		d1.walk();
+	</script>
+
+	</head>
+	<body>
+	</body>
+</html>
+

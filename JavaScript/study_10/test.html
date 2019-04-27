@@ -1,0 +1,25 @@
+<html>
+	<head>
+		<title>
+			study_10
+		</title>
+	</head>
+	<body>
+		<input type="button" id="btn1" value="BUTTON1"/>
+		<input type="button" id="btn2" value="BUTTON2"/>
+
+		<script type="text/javascript">
+			var sub_win;
+
+			window.onload = function(){
+				document.getElementById("btn1").onclick = function(){
+					sub_win = window.open("https://www.naver.com","sample","width=300,height=300");
+				}
+				document.getElementById("btn2").onclick = function(){
+					sub_win.close();
+				}
+			}
+		</script>
+	</body>
+</html>
+

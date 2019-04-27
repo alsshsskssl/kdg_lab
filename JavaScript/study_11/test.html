@@ -1,0 +1,24 @@
+<html>
+	<head>
+		<title>
+			study_11
+		</title>
+	</head>
+	<body>
+	<script type="text/javascript">
+		function process(){
+			var name = document.fm.name.value;
+			window.alert("Hi~ "+name+"!");
+			
+			return false;
+		}
+	</script>
+
+	<form name="fm" onsubmit="return process()">
+		name : 
+		<input type="text" name="name" size="10"/>
+		<input type="submit" value="transmit"/>
+	</form>
+	</body>
+</html>
+

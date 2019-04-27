@@ -1,0 +1,25 @@
+<html>
+	<head>
+		<title>
+			test title!
+		</title>
+	</head>
+	<body>
+	<script type="text/javascript">
+		function showMessage(value){
+			if(arguments.length!=1){
+				throw new Error("parameter is wrong");
+			}
+			else
+				document.writeln(value);
+		}
+		
+		try{
+			showMessage("kdg");
+		} catch(e) {
+			window.alert(e.message);
+		}	
+	</script>
+	</body>
+
+</html>
