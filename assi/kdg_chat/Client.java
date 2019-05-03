@@ -61,6 +61,9 @@ public class Client extends JFrame{
 				while(true){
 					try{
 						String S = dataInputStream.readUTF();
+						if(S.equals("/close")){
+							System.exit(0);
+						}
 						System.out.println(S);
 						String temp = ta.getText();
 						temp+=S;
@@ -91,6 +94,12 @@ public class Client extends JFrame{
 					String S = sc.nextLine();
 					try{
 						dataOutputStream.writeUTF(S);
+						/*
+						if(S.equals("/exit")){
+							System.out.println("Bye~^^\n");
+							System.exit(0);
+						}
+						*/
 					}catch(Exception e){
 	
 					}
