@@ -18,14 +18,29 @@ int trans_str(string S);
 string mk_extract_info();
 vector<pair<char,string> > mk_extract_info_vec(string S);
 string mk_bit_stream(char ch);
-int* mk_frequency_arr(string file_name);
-string output_part_of_result(string S);
-string calc_buff = "";
-string decode(string s,vector<pair<char,string> > v);
-string get_vec_str(string file_name);
-int print_vec(vector<pair<char,string> > vec);
 int main(int argc,char* argv[]){
+	//cout << argc << endl;
 	if(argc<3){
+		/*
+		binary_tree *tree = new binary_tree();
+		binary_tree *tree1 = new binary_tree();
+	
+		tree->insert(make_pair(8,'t'));
+		tree->insert(make_pair(4,'s'));
+		tree->insert(make_pair(4,'e'));
+		tree->insert(make_pair(3,'\n'));
+		tree->insert(make_pair(2,' '));
+		cout << "---------------------------" << endl;
+		tree1->insert(make_pair(2,'g'));
+		tree1->insert(make_pair(1,'f'));
+		tree1->insert(make_pair(3,'d'));	
+		cout << tree->get_value(tree->search(make_pair(4,'s'))) << endl;
+		binary_tree *tree2= new binary_tree();
+		tree2 = sum_tree(tree,tree1);
+		cout << tree2->get_value(tree->search(make_pair(2,'g'))) << endl;
+		*/	
+	
+		
 		int S_cnt[255]={0,}; //빈도수 체크 할 배열
 		string S; //문자열 넣으려는 배열
 		char temp_0[1000000];	//하나의 라인 천만글자 까지 가능
@@ -35,20 +50,20 @@ int main(int argc,char* argv[]){
 			string temp_1(temp_0);	//temp_1에 temp_0에 저장한 문자열 저장
 			temp_1 += "\n";	//temp_1에 개행문자 추가
 			S += temp_1;	//temp_1에 저장된 문자열을 최종 문자열인 S에 이어붙임
-			//무조건 \n가 두개 붙어있더라.. 왜 붙어 있는건지 아직 모름 근데 잘 돌아 가니까 냅둠
-			//그리고 이중 하나는 빈도수 체크에서 빠져있어
+			//따라서 무조건 \n가 두개 붙어있더라.. 왜 붙어 있는건지 아직 모름 근데 잘 돌아 가니까 냅둠
 		}
 		
-		for(int i=0;i<255;i++){
-			int *temp = mk_frequency_arr(argv[1]);
-			S_cnt[i]=temp[i];
+		//cout << S << endl;
+		for(int i=0;i<S.length();i++){		//make frq_arr
+			S_cnt[S.at(i)]++;	//S_cnt 각 문자의 아스키코드 번호의 index에 빈도수 체크
 		}
+		//cout << sizeof(S_cnt)/4 << endl;
 		
-		for(int i=0;i<255;i++){
-			if(S_cnt[i]!=0)
-				cout << i << "/" << S_cnt[i] << " ";
-		}
 		
+	//	for(int i=0;i<sizeof(S_cnt)/4;i++)	//debug output S_cnt[]
+	//		cout << S_cnt[i] << " ";
+		
+	
 		vector<pair<int,char> > v;	
 	
 		for(int i=0;i<sizeof(S_cnt)/4;i++){		//read file_string and make pair_list
@@ -59,25 +74,50 @@ int main(int argc,char* argv[]){
 		}
 		
 		sort(v.begin(),v.end(),greater<pair<int,char> >());	//vector_pair sorting
+	
 		
+	//	for(int i=0;i<v.size();i++){	//debug output vector
+	//		cout << v[i].first << " " << v[i].second << endl;
+	//	}
+	
 		binary_tree* huf_tree = new binary_tree();	//make_
 		huf_tree = mk_huffman_tree(v);			//huffman_tree
+		//cout << huf_tree->get_value(huf_tree->search(make_pair(4,'s'))) << endl;
 		vector<pair<char,int> > code_vector;
-
+	//	cout << huf_tree->huf_code(make_pair(4,'e')) << endl;
+	
+	//	cout << huf_tree->search(make_pair(4,'e')) << "fd" << endl;
+		
 		fill_V(huf_tree->get_root(),"");
 		
-		//string을 bit로 가공-------------
-		string str = output_part_of_result(S);
+		//check_V
+		//cout << "V.at(0)" << V.at(0).first << " " << V.at(0).second << endl;
+		//cout << "V.at(1)" << V.at(1).first << " " << V.at(1).second << endl;
+		//cout << "V.at(2)" << V.at(2).first << " " << V.at(2).second << endl;
+		//cout << "V.at(3)" << V.at(3).first << " " << V.at(3).second << endl;
+		//cout << "V.at(4)" << V.at(4).first << " " << V.at(4).second << endl; 
+		//cout << huf_tree->get_char(huf_tree->get_root()->right->right->right) << endl;
 		
-		int padding_size = 7-(str.length()%7);
-		cout << "padding size = " << padding_size << endl;
-		cout << "vector size = " << V.size() << endl;
+		string str;
+		for(int i=0;i<S.length();i++){
+			for(int j=0;j<V.size();j++){
+				if(S[i]==V.at(j).first){
+					str+=V.at(j).second;
+				}
+			}
+		}
+	
+		//cout << str << endl;		//debug
+		
+		int padding_size = 8-(str.length()%7);
 		for(int i=0;i<padding_size;i++){	//padding
 			str+="0";
 		}
 		
-		cout << endl;
+		cout << str << endl;
 		
+		//cout << str << " " << str.length() << endl;
+		//cout << trans_str("11111111") << endl;
 		string result = "";
 		string temp = "";
 		for(int i=0;i<str.length();i++){
@@ -88,8 +128,8 @@ int main(int argc,char* argv[]){
 				temp = "";
 			}
 		}
-		//string을 bit로 가공---------
-		result+=mk_extract_info();	//insert extract_info in result string
+		result+=mk_extract_info();
+		//cout << result << endl;
 		string out_name = argv[1];
 		out_name.erase(out_name.length()-1,1);
 		out_name.erase(out_name.length()-1,1);
@@ -98,147 +138,60 @@ int main(int argc,char* argv[]){
 		ofstream out(out_name);
 		out << result;
 		out.close();
+		
+		//cout << mk_extract_info() << endl;
 	}else{
-		FILE *in;
-		char ch;
-		string str(argv[1]);
-		const char *temp = str.c_str();
-		in=fopen(temp,"rb");
-		
-		
-		if(in==NULL){	//오류제어
-			fputs("file open err!",stderr);
-			cout << "오류" << endl;
-			exit(1);
+		string S;
+		char temp_0[1000000];
+		cout << "압축 풀기" << endl;
+		//vector<pair<char,string> > V;
+		ifstream inFile(argv[1]);
+		while(!inFile.eof()){
+			inFile.getline(temp_0,1000000);
+			string temp_1(temp_0);
+			temp_1 += "\n";
+			S += temp_1;
 		}
-		
-
-		string S = get_vec_str(argv[1]);
-		//cout << S << endl;
-		//cout << S << S.size() << endl;
-		
-		vector<pair<char,string> > V = mk_extract_info_vec(S); //이걸 쓰려면 뒤에서부터 읽힌 string 필요
-		//print_vec(V);
-		string decode_result = "";
-		int slash_cnt=0;
-		while(!feof(in)){	//슬레시 개수체크 추가해 봤다.
-			if(slash_cnt==2)
-				break;
-			ch=fgetc(in);
-			if(slash_cnt==1 && ch!='/'){
-				//cout << ch << endl;
-				decode(mk_bit_stream(ch),V);
-				//S+='/';	//char문자 추출 함수로 수정할 것!
-				slash_cnt = 0;
+		S.erase(S.size()-1,S.size());	//하나 추가된 개행문자 삭제
+		cout << S << endl;
+		//Start decoding----------------------------------------------------------------------
+		vector<pair<char,string> > V = mk_extract_info_vec(S);
+		/*
+		vector<pair<char,string> > V;
+		string str_temp;
+		char ch_temp;
+		//cout << S.size() << " "  << S.at(32) << endl;
+		for(int i=1;;){
+			while(S.at(S.size()-1-i) != '/'){
+				str_temp += S.at(S.size()-1-i);
+				i++;
 			}
-			if(slash_cnt==0 && ch!='/'){
-				//cout << ch << endl;
-				decode(mk_bit_stream(ch),V);
-				//S+=ch;	//char문자 추출 함수로 수정할 것!
+			i++;
+			//cout << i << endl;
+			while(S.at(S.size()-1-i) != '/'){
+				ch_temp = S.at(S.size()-1-i);
+				i++;
 			}
-			if(ch=='/'){
-				slash_cnt++;
-			}
-			//decode_result += decode(mk_bit_stream(ch=fgetc(in)),V);
-		}
-		//cout << "디코딩 결과 : " << decode_result << "종료";
-	}
-	/*
-	cout << "리스트 출력,vector 길이 : " << V.size() << endl;
-	for(int i=0;i<V.size();i++){
-		cout << V.at(i).first << "/" << V.at(i).second;
-		if(V.size()!=i){
-			cout << endl;
-		}
-	}
-	*/
-	return 0;
-}
-int print_vec(vector<pair<char,string> > vec){
-	cout << "벡터 상태" << endl;
-	for(int i=0;i<vec.size();i++){
-		cout << "[" << vec.at(i).first << "," << vec.at(i).second << "]" << endl;
-	}
-	
-	return 0;
-}
-string get_vec_str(string file_name){
-	string S = "";
-	
-	char ch;
-	char* buf;
-	FILE *in;
-	const char *temp = file_name.c_str();
-	in=fopen(temp,"r");
-	
-	if(in==NULL){
-		fputs("file open err!",stderr);
-		exit(1);
-	}
-	
-	fseek(in,-6000,SEEK_END);
-	while(!feof(in)){
-		ch=fgetc(in);
-		S+=ch;
-	}
-/*	
-	fseek(in,-1,SEEK_END);
-	
-	int cnt=0;
-	for(int i=0;;i++){
-		fread(buf,1,-1,in);
-		cout << buf-19 << endl;
-		if(buf!="/"){
-			fseek(in,-i-1,SEEK_END);
-		}else{
-			fseek(in,-i-1,SEEK_END);
-			fread(buf,1,1,in);
-			if(buf=="/"){
-				fseek(in,-i-1,SEEK_END);
-				while(!feof(in)){
-					result+=fgetc(in);
-				}
+			i++;
+			reverse(str_temp.begin(),str_temp.end());
+			V.insert(V.begin(),make_pair(ch_temp,str_temp));
+			str_temp = "";
+			//V.push_front(make_pair(ch_temp,str_temp));
+			if(S.at(S.size()-1-i)=='/' && S.at(S.size()-2-i)!='/'){
 				break;
 			}
+			else
+				continue;
 		}
-	}
-*/	//cout << S << endl;
-	return S;
-}
-
-int* mk_frequency_arr(string file_name){
-	int arr[255]={0,};
-	int *result;
-	result=arr;
-	char ch;
-	FILE *in;
-	const char *temp = file_name.c_str();
-	in=fopen(temp,"rb");
-	if(in==NULL){
-		fputs("file open err!",stderr);
-		exit(1);
-	}
-	
-	while(!feof(in)){
-		arr[ch=fgetc(in)]++;
-	}
-	fclose(in);
-
-	return result;
-
-}
-
-string output_part_of_result(string S){
-	cout << V.at(0).first << endl;
-	string result = "";
-	for(int i=0;i<S.size();i++){
-		for(int j=0;j<V.size();j++){
-			if(S.at(i)==V.at(j).first)
-				result+=V.at(j).second;
+		*/
+		cout << "리스트 출력,vector 길이 : " << V.size() << endl;
+		for(int i=0;i<V.size();i++){
+			cout << V.at(i).first << "/" << V.at(i).second << endl;
 		}
-	}
 
-	return result;
+		cout << mk_bit_stream('\n') << endl;
+	}
+	return 0;
 }
 
 string mk_bit_stream(char ch){
@@ -265,23 +218,18 @@ string mk_bit_stream(char ch){
 
 vector<pair<char,string> > mk_extract_info_vec(string S){
 	vector<pair<char,string> > V;
-	//cout << S << endl;
 	string str_temp;
 	char ch_temp;
-	//cout << S.size() << endl;	//39나옴
-	for(int i=2;;){	//왜 i가 2부터인지 잘 이해안됨 원래는 1이였음
+	for(int i=1;;){
 		while(S.at(S.size()-1-i) != '/'){
 			str_temp += S.at(S.size()-1-i);
-			//cout << i << endl;
 			i++;
 		}
-		//cout << str_temp << endl;
 		i++;
 		while(S.at(S.size()-1-i) != '/'){
 			ch_temp = S.at(S.size()-1-i);
 			i++;
 		}
-		//cout << ch_temp << endl;
 		i++;
 		reverse(str_temp.begin(),str_temp.end());
 		V.insert(V.begin(),make_pair(ch_temp,str_temp)); 
@@ -292,40 +240,7 @@ vector<pair<char,string> > mk_extract_info_vec(string S){
 		else
 			continue;
 	}
-	//cout << V.at(0).first << endl;
-
 	return V;
-}
-string decode(string s,vector<pair<char,string> > v){
-	string x = "";
-	string y = "";
-	string z = "";
-	
-	string result = "";
-	y = calc_buff;
-	while(s.size()!=0){
-		if(s.size()>6){
-			x+=s.substr(0,7);
-			s.erase(0,7);
-		}else{
-			x+=s.substr();
-			s.erase();
-		}
-		while(x.size()!=0){ 
-			y+=x.substr(0,1);
-			x.erase(0,1);
-			for(int j=0;j<v.size();j++){
-				if(y.size()!=0 && v[j].second==y && v[j].second.size()!=0){
-					z+=v[j].first;
-					y.erase();
-				}
-			}
-		}
-	}
-	calc_buff=y;
-	result = z;
-	cout << z;
-	return result;
 }
 
 string mk_extract_info(){
