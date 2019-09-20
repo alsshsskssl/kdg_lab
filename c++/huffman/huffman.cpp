@@ -206,7 +206,7 @@ int main(int argc,char* argv[]){
 			exit(1);
 		}
 		
-		fp = fopen(temp,"rb");  //압축파일을 열음
+		fp = fopen(temp,"r");  //압축파일을 열음
 
 		int ch;
 		int temp1 = 32;
@@ -265,7 +265,8 @@ int main(int argc,char* argv[]){
 				result_temp = "";
 			}
 		}
-		ofstream out(str);
+		ofstream out(orgin_name);
+		cout << "result : " << result << endl;
 		out << result;
 		out.close();
 	}
