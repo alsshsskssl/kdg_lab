@@ -17,58 +17,35 @@ node* fill_V(node* leaf,string S);
 int trans_str(string S);
 string mk_extract_info();
 vector<pair<char,string> > mk_extract_info_vec(string S);
-string mk_bit_stream(int ch);
+string mk_bit_stream(char ch);
 int* mk_frequency_arr(string file_name);
 string output_part_of_result(string S);
 string calc_buff = "";
 string decode(string s,vector<pair<char,string> > v);
 string get_vec_str(string file_name);
 int print_vec(vector<pair<char,string> > vec);
-//string char_to_bit_string(char ch);
-
-FILE *fp;
-FILE *in;       //결과파일을 만들놈
 int main(int argc,char* argv[]){
 	if(argc<3){
 		int S_cnt[255]={0,}; //빈도수 체크 할 배열
 		string S; //문자열 넣으려는 배열
-		char ch;
 		//char temp_0[1000000];	//하나의 라인 천만글자 까지 가능
 		
-		//FILE *fin = fopen(argv[1],"r");
-
-		/*
-		if(fin==NULL){
-			fputs("file open err!",stderr);
-			exit(1);
-		}
-		*/
-		
-		//string real_str = "";
-		//string str;
-		/*
-		string str = "";//output_part_of_result(S);
+		FILE *fin = fopen(argv[1],"rb");
 		while(!feof(fin)){
-			ch=fgetc(fin);
-			//cout << ch << "[" << (int)ch << "]";
-			if((int)ch==0){
-				str += output_part_of_result(S);
-				cout << str << "프린트 str" << endl;
-				str += "0000000";
-				S = "";
-			}else{
-				S+=ch;
-			}
+			S += fgetc(fin);
+		}
+		/*
+		ifstream inFile(argv[1]);	//파일 읽기
+		while(!inFile.eof()){
+			inFile.getline(temp_0,1000000);	//하나 읽은 라인을 temp_0에 저장
+			string temp_1(temp_0);	//temp_1에 temp_0에 저장한 문자열 저장
+			temp_1 += "\n";	//temp_1에 개행문자 추가
+			S += temp_1;	//temp_1에 저장된 문자열을 최종 문자열인 S에 이어붙임
+			//무조건 \n가 두개 붙어있더라.. 왜 붙어 있는건지 아직 모름 근데 잘 돌아 가니까 냅둠
+			//그리고 이중 하나는 빈도수 체크에서 빠져있어
+			S.erase(S.length()-1,1);
 		}
 		*/
-		/*
-		cout << "디버깅 시작" << endl;
-		//str = real_str;
-		//cout << str << endl;
-		cout << "디버깅 종료" << endl;
-		*/
-		//cout << S.size() << endl;
-		
 		for(int i=0;i<255;i++){
 			int *temp = mk_frequency_arr(argv[1]);
 			S_cnt[i]=temp[i];
@@ -95,45 +72,10 @@ int main(int argc,char* argv[]){
 		vector<pair<char,int> > code_vector;
 
 		fill_V(huf_tree->get_root(),"");
-		cout << V.at(0).first << "벡터V완성" <<endl;
-		//string을 bit로 가공-------------
-	
-		//cout << S << endl;
-		//string str = output_part_of_result(S);
-		FILE *fin = fopen(argv[1],"r");
-		if(fin==NULL){
-			fputs("file open err!",stderr);
-			exit(1);
-		}
-		string str = "";
-		while(!feof(fin)){
-			ch=fgetc(fin);
-			if((int)ch==0){
-				//cout << "아웃풋파오리에 넣기 전S :" << S << endl;
-				//cout << "아웃풋파오리에 넣기 전S사이즈 :" << S.size() << endl;
-				str += output_part_of_result(S);
-				//cout << "널 문자 처리 전 : " << str << endl;
-				cout << "널문자 처리" << endl;
-				int cnt0=0;
-				for(int i=0;i<8;i++){
-					if(str.at(str.size()-i-1)=='0'){
-						cnt0++;
-					}
-				}
-				//cout << cnt0 << endl;
-				if(cnt0!=7){
-					str += "0000000";
-				}
-				cout << "널 문자 처리 후 : " << str << endl;
-				S = "";
-			}else{
-				S += ch;
-			}
-		}
-		str += output_part_of_result(S);
 		
-		//cout << "최종 str : " << str << endl;
-
+		//string을 bit로 가공-------------
+		string str = output_part_of_result(S);
+		
 		int padding_size = 7-(str.length()%7);
 		
 		cout << "padding size = " << padding_size << endl;
@@ -142,8 +84,7 @@ int main(int argc,char* argv[]){
 		for(int i=0;i<padding_size;i++){	//padding
 			str+="0";
 		}
-
-		cout << "최종 str : " << str << endl;
+		
 		cout << endl;
 		
 		string result = "";
@@ -171,15 +112,19 @@ int main(int argc,char* argv[]){
 		out << result;
 		out.close();
 	}else{
-
-
-		//FILE *in;	//결과파일을 만들놈
-		
+		FILE *in;	//결과파일을 만들놈
+		char ch;
 		string str(argv[1]);	//압축파일 이름
 		const char *temp = str.c_str();	//temp : 압축파일 이름
 		//in=fopen(temp,"rb");
 		
-		
+		/*
+		if(in==NULL){	//오류제어
+			fputs("file open err!",stderr);
+			cout << "오류" << endl;
+			exit(1);
+		}
+		*/
 
 		string S = get_vec_str(argv[1]);	//압축파일의 정보부분을 S에 저장
 		//cout << S << endl;
@@ -188,13 +133,17 @@ int main(int argc,char* argv[]){
 		vector<pair<char,string> > V = mk_extract_info_vec(S); //이걸 쓰려면 뒤에서부터 읽힌 string 필요
 		string decode_result = "";
 		//int slash_cnt=0;
-		//fp = fopen(temp,"rb");	//압축파일을 열음
+		
+		FILE *fp = fopen(temp,"rb");	//압축파일을 열음
 		//string temp0 = "";
 		//const char *temp_p;
+		
 		vector<pair<char,string> > temp_V;
 		for(int i=0;i<V.size()-1;i++){	//맨 마지막 부분이 원본파일 이름과 패딩정보있는데 그정보 안받고 지워둔 temp_V를 만드는 for문
 			temp_V.push_back(V.at(i));
 		}
+		char temp1 = ' ';
+		char temp2 = ' ';
 
 		const char* orgin_name = V.at(V.size()-1).second.c_str();
 		remove(orgin_name);	//origin_name : 압축파일의 정보벡터에서 읽어둔 원본파일 이름
@@ -205,74 +154,50 @@ int main(int argc,char* argv[]){
 			cout << "오류" << endl;
 			exit(1);
 		}
-		
-		fp = fopen(temp,"rb");  //압축파일을 열음
 
-		int ch;
-		int temp1 = 32;
-		int temp2 = 32;
+		ch = fgetc(fp);
+		temp1 = fgetc(fp);
+		temp2 = fgetc(fp);
 		
-		ch = (int)fgetc(fp);
-		temp1 = (int)fgetc(fp);
-		temp2 = (int)fgetc(fp);
-		
+
+		//const char* orgin_name = V.at(V.size()-1).second.c_str();	//원본 삭제
+		//remove(orgin_name);
+		//
 		const char *temp_p;
 		string temp0 = "";
-		string bit_string = "";	//수정사항
 		while(!feof(fp)){	//슬레시 개수체크 추가해 봤다.
 			if(temp1=='/' && temp2=='/'){	//마지막 글자 판단
 				string temp_S = mk_bit_stream(ch);
-				temp_S.erase(7-V.at(V.size()-1).first,V.at(V.size()-1).first);//마지막 글자 패딩 지움
-				//temp0 = decode(temp_S,temp_V);	//수정사항
-				bit_string += decode(temp_S,temp_V);
+				temp_S.erase(7-V.at(V.size()-1).first,V.at(V.size()-1).first);
+				temp0 = decode(temp_S,temp_V);
 				
 			//	cout << temp0;
-				/*
-				temp_p = temp0.c_str();		//수정사항
-				fputs(temp_p,in);		//수정사항
-				*/
+				
+				temp_p = temp0.c_str();
+				fputs(temp_p,in);
+				
 				break;
 			}else{
-				//temp0 = decode(mk_bit_stream(ch),temp_V);	//수정사항
-				bit_string += decode(mk_bit_stream(ch),temp_V);
+				temp0 = decode(mk_bit_stream(ch),temp_V);
+				
 			//	cout << temp0;
-				/*
-				temp_p = temp0.c_str();		//수정사항
-				fputs(temp_p,in);		//수정사항
-				*/
+				
+				temp_p = temp0.c_str();
+				fputs(temp_p,in);
 			}
 			ch = temp1;
 			temp1 = temp2;
 			temp2 = fgetc(fp);
-			if(temp2==0){
-				cout << "temp2에 널문자 들어옴" << endl;
-			}
 		}
 		/*
 		const char* orgin_name = V.at(V.size()-1).second.c_str();
 		remove(orgin_name);
 		*/
-		//fclose(fp); 	//수정사항
-		//여기 아래부분 부터는 bit_string이 잘 들어왔으면 잘 프린트 될거로 예상
-		cout << bit_string << "비트스트링 출력" << endl;
-		string result = "";
-		string result_temp = "";
-		for(int i=0;i<bit_string.length();i++){
-			result_temp += bit_string[i];
-			if(result_temp.length()%7==0){
-				char temp2 = (char)trans_str(result_temp);
-				result += temp2;
-				result_temp = "";
-			}
-		}
-		ofstream out(str);
-		out << result;
-		out.close();
+		fclose(fp);
 	}
 
 	return 0;
 }
-
 int print_vec(vector<pair<char,string> > vec){
 	cout << "벡터 상태" << endl;
 	for(int i=0;i<vec.size();i++){
@@ -327,7 +252,7 @@ int* mk_frequency_arr(string file_name){
 }
 
 string output_part_of_result(string S){
-	//cout << V.at(0).first << endl;
+	cout << V.at(0).first << endl;
 	string result = "";
 	for(int i=0;i<S.size();i++){
 		for(int j=0;j<V.size();j++){
@@ -335,15 +260,12 @@ string output_part_of_result(string S){
 				result+=V.at(j).second;
 		}
 	}
-	//cout << result << endl;
+
 	return result;
 }
 
-string mk_bit_stream(int ch){
+string mk_bit_stream(char ch){
 	string S = "";
-	if(ch==0){
-		cout << "ch에 널이 들어온걸 mk_bit_stream이 인식" << endl;	//인식못함
-	}
 	while(ch>1){
 		if(ch%2==1){
 			ch--;
@@ -397,25 +319,11 @@ vector<pair<char,string> > mk_extract_info_vec(string S){
 
 	return V;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 string decode(string s,vector<pair<char,string> > v){
 	string x = "";
 	string y = "";
 	string z = "";
 	string result = "";
-	string bit_result = "";
 	//ofstream fo;
 	//fo.open("test.kdg2",ios::app);
 	y = calc_buff;
@@ -432,8 +340,8 @@ string decode(string s,vector<pair<char,string> > v){
 			x.erase(0,1);
 			for(int j=0;j<v.size();j++){
 				if(y.size()!=0 && v[j].second==y && v[j].second.size()!=0){
-					//z+=v[j].first;			//수정사항
-					z += mk_bit_stream(v[j].first);	//수정사항
+					z+=v[j].first;
+					//fo.put(V[j].first);
 					y.erase();
 				}
 			}
@@ -445,21 +353,6 @@ string decode(string s,vector<pair<char,string> > v){
 	//fo.close();
 	return result;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 string mk_extract_info(){
 	string S;
