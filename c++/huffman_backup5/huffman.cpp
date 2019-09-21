@@ -147,7 +147,6 @@ int main(int argc,char* argv[]){
 		out_name += "kdg";
 		print_vec(V);
 		ofstream out(out_name);
-		result += '\n';
 		out << result;
 		out.close();
 	}else{	
@@ -175,26 +174,15 @@ int main(int argc,char* argv[]){
 			temp_V.push_back(V.at(i));
 		}
 
-
-		print_vec(V);
-		cout << "V.at(V.size()-1).first : " << (int)V.at(V.size()-1).first << endl;
-		cout << "V.at(V.size()-1).second.c_str() : " << V.at(V.size()-1).second.c_str() << endl;
 		const char* orgin_name = V.at(V.size()-1).second.c_str();
+		remove(orgin_name);	//origin_name : 압축파일의 정보벡터에서 읽어둔 원본파일 이름
 		
-		
-		
-		
-		
-		//remove(orgin_name);	//origin_name : 압축파일의 정보벡터에서 읽어둔 원본파일 이름
-		/*
 		in=fopen(orgin_name,"w");
 		if(in==NULL){   //오류제어
 			fputs("file open err!(in)",stderr);
 			//cout << "in open err!" << endl;
 			exit(1);
 		}
-		*/
-
 		/*
 		FILE* sizefp = fopen(temp,"r");
 		fseek(sizefp,0,SEEK_END);
@@ -226,41 +214,24 @@ int main(int argc,char* argv[]){
 		for(int i=0;i<info_cnt;i++){
 			broken_file.erase(broken_file.size()-1,1);
 		}
-		cout << "broken_file : " << broken_file << endl;
-		cout << "broken_file.size() : " << broken_file.size() << endl;
+		cout << broken_file << endl;
+		cout << broken_file.size() << endl;
 
-		
+
 		string bit_stream = "";
 		for(int i=0;i<broken_file.size();i++){
 			bit_stream += mk_bit_stream(broken_file[i]);
 		}
-		cout << "bit_stream : " << bit_stream << endl;
-		cout << "bit_stream size : " << bit_stream.size() << endl;
 		
-
-		
+		//cout << bit_stream << endl	//비트스트림 잘 받아왔음 (널 포함)
 		for(int i=0;i<V.at(V.size()-1).first;i++){	//패딩 제거
 			bit_stream.erase(bit_stream.size()-1,1);
 		}
-		/*
-		int gahang_size = 0;	//개행문자 길이 파악
-		for(int i=0;i<temp_V.size();i++){
-			if(temp_V.at(i).first='\n'){
-				gahang_size = temp_V.at(i).second.size();
-			}
-		}
-		*/
-		for(int i=0;i<7;i++){	//개행문자 길이만큼 제거	(0001010)4개
-			bit_stream.erase(bit_stream.size()-1,1);
-		}
-		
-		cout << "bit_stream : " << bit_stream << " (패딩제거)" << endl;
+		cout << "bit_stream : " << bit_stream << endl;
 		string last_result = decode(bit_stream,temp_V);
-		cout << "last_result : " << last_result << endl;
 		
+		//cout << decode(bit_stream,temp_V);
 
-		remove(orgin_name);
-		cout << "orgin_name : " << orgin_name << endl;
 		ofstream out(orgin_name);
 		out << last_result;
 		//cout << broken_file.size() << endl;
@@ -369,18 +340,7 @@ vector<pair<char,string> > mk_extract_info_vec(string S){
 	string str_temp;
 	char ch_temp;
 	//cout << S.size() << endl;	//39나옴
-	
-
-
-
-	for(int i=3;;){	//왜 i가 2부터인지 잘 이해안됨 원래는 1이였음
-
-
-
-
-
-
-
+	for(int i=2;;){	//왜 i가 2부터인지 잘 이해안됨 원래는 1이였음
 		while(S.at(S.size()-1-i) != '/'){
 			str_temp += S.at(S.size()-1-i);
 			//cout << i << endl;
