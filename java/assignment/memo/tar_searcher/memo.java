@@ -7,6 +7,10 @@ import java.io.*;
 import java.io.IOException;
 import java.util.Date;
 import java.util.Calendar;
+import java.lang.Runtime;
+import java.lang.Process;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 public class memo extends JFrame{
 	JFileChooser jfc;
 	TextArea ta;
@@ -14,7 +18,8 @@ public class memo extends JFrame{
 	String b2 = new String();
 	String b3 = new String();
 	String b4 = new String();
-
+	String path_buf = new String("");
+	int path_buf_length = 0;
 	memo(){
 		c_menu();
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -115,7 +120,7 @@ public class memo extends JFrame{
 		Page.add(page_up);
 
 		JMenuItem page_down = new JMenuItem("page down");
-		//page_down.addActionListener(new MenuActionListener());
+		page_down.addActionListener(new Page_down());
 		Page.add(page_down);
 
 		
@@ -127,7 +132,60 @@ public class memo extends JFrame{
 		mb.add(Page);
 		setJMenuBar(mb);
 	}
+	public void open_file(String file_path){
+		String S = new String("");	//result String
+		try{
+			//path_buf = file_path;
+			FileReader fr = new FileReader(file_path);
+			boolean first = true;		//이녀석 뭐지?
+			int c;
+			while(true){
+				c = fr.read();
+				if(c==-1)
+					break;
+				S=S.concat(String.valueOf((char)c));
+			}
+			//System.out.println(S);
+			fr.close();
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		ta.setText(S);
+	}
+
+	public String cmd(String command){
+		//String command = new String("ls");
+		String str_result = new String("");
+		String s;
+		Runtime rt = Runtime.getRuntime();
+		try{
+			Process p = rt.exec(command);
+			BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
+			stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
+			while((s=stdInput.readLine()) != null){
+				str_result += s;
+			}
+			}catch(IOException e){
+		}
+
+		System.out.println("hihi");
+		System.out.println(str_result);
+		System.out.println("hihi");
+		return str_result;
+	}
+
 	public class Page_up implements ActionListener{
+		public void actionPerformed(ActionEvent evt){
+			String test = new String("");
+			String resu = new String("");
+			test += "tar -tvf ";
+			test += path_buf;
+			resu = cmd(test);
+			System.out.println("결과 : ");
+			System.out.println(test);
+		}
+	}
+	public class Page_down implements ActionListener{
 		public void actionPerformed(ActionEvent evt){
 			System.exit(0);
 		}
@@ -144,15 +202,6 @@ public class memo extends JFrame{
 			Calendar cal = Calendar.getInstance();
 			Date today = new Date();
 			temp = temp.concat(""+today);
-			/*
-			temp = temp.concat("Y"+cal.get(Calendar.YEAR));
-			temp = temp.concat(" M"+cal.get(Calendar.MONTH));
-			temp = temp.concat(" D"+cal.get(Calendar.DAY_OF_MONTH));
-			temp = temp.concat(" "+cal.get(Calendar.HOUR_OF_DAY)+":");
-			temp = temp.concat(cal.get(Calendar.MINUTE)+":");
-			temp = temp.concat(cal.get(Calendar.SECOND)+"");
-			*/
-
 			ta.setText(temp);
 		}
 	}
@@ -168,25 +217,25 @@ public class memo extends JFrame{
 	}
 	public class Open_file implements ActionListener{	//Open
 		public void actionPerformed(ActionEvent evt){
+			
 			jfc = new JFileChooser();
 			jfc.showOpenDialog(null);
-			String S = new String("");
+			String S = new String("");	//result String
+			
 			try{
-				FileReader fr = new FileReader(jfc.getSelectedFile().getPath());
-				boolean first = true;
-				int c;
-				while(true){
-					c = fr.read();
-					if(c==-1)
-						break;
-					S=S.concat(String.valueOf((char)c));
-				}
-				System.out.println(S);
-				fr.close();
+				String file_path = new String(jfc.getSelectedFile().getPath());
+				path_buf = file_path;
+				S += "tar xvfzp ";
+				S += file_path;
+				S += " ";
+				//S += search;
+				cmd(S);
+				//FileReader fr = new FileReader(file_path);
 			}catch(Exception e){
 				e.printStackTrace();
 			}
 			ta.setText(S);
+			
 		}
 	}
 	public class Save_as implements ActionListener{		//Save_as
@@ -211,9 +260,8 @@ public class memo extends JFrame{
 		}
 	}
 	
-	public static void main(String[] args) throws IOException{
+	public static void main(String[] args){
 		memo frame = new memo();	
-		
 	}
 	class buf_interface extends JFrame{
 		JTextField buf_tf0;
