@@ -168,9 +168,7 @@ public class memo extends JFrame{
 			}catch(IOException e){
 		}
 
-		System.out.println("hihi");
 		System.out.println(str_result);
-		System.out.println("hihi");
 		return str_result;
 	}
 
@@ -181,8 +179,9 @@ public class memo extends JFrame{
 			test += "tar -tvf ";
 			test += path_buf;
 			resu = cmd(test);
+			System.out.println(resu.length());
 			System.out.println("결과 : ");
-			System.out.println(test);
+			System.out.println(resu);
 		}
 	}
 	public class Page_down implements ActionListener{
