@@ -263,7 +263,7 @@ int main(int argc,char* argv[]){
 				char temp2 = (char)trans_str(result_temp);
 				result += temp2;
 				result_temp = "";
-			}
+			}	
 		}
 		ofstream out(str);
 		out << result;
