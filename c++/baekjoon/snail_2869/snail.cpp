@@ -1,7 +1,8 @@
 #include <iostream>
 using namespace std;
 int calc(int A,int B,int T);
-int calc();
+int state;
+int day=1;
 int main(){
 	int A,B,T;
 	cin >> A >> B >> T;
@@ -10,10 +11,15 @@ int main(){
 	
 	return 0;
 }
-int calc_ing(){
-	
-}
 int calc(int A,int B,int T){
+	state += A;
 	
-	return 0;
+	if(state>=T){
+		return day;
+	}else{
+		state -= B;
+		day++;
+		return calc(A,B,T);
+	}
+	return -1;
 }
