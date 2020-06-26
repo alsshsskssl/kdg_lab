@@ -1,3 +1,0 @@
-기본쉘을 zsh로 바꾸기
-tmux.conf에 추가
-set-option -g default-shell /bin/zsh
