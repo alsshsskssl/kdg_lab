@@ -1,0 +1,12 @@
+db들어와서 table_name하면 테이블리스트가 나옴 
+
+우선 데이터베이스 내에 몇 개의 테이블이 존재하는지 확인하기 위해 count 명령어를 사용
+select count(table_name) from information_schema.tables where table_schema=database()
+-> 2
+
+테이블 개수를 알았으니 전체 두 개의 테이블 중 첫 번째 테이블 명의 길이를 확인하기 위해 length와 limit 명령어를 사용
+select length(table_name) from information_schema.tables where table_schema=database() limit 0,1
+-> 13
+
+첫 번째 테이블에 첫 번째 문자를 확인하기 위해 ascii와 substr 명령어를 사용
+select ascii(substr(table_name, 1, 1)) from information_schema.tables where table_schema=database() limit 0,1
